@@ -1,0 +1,30 @@
+ <!-- ================= -->
+  <!-- Register Farmer -->
+  <!-- ================= -->
+  <div class="section-title" id="Register-Farmer">
+    <h2>Vendor Payments</h2>
+  </div>
+
+  <form  >
+    <div>
+      <label for="vendorId">Vendor ID:</label>
+      <input type="number" id="vendorId" (input)="vendorId = $any($event.target).valueAsNumber" required>
+      
+    </div>
+    <br><br>
+    <div>
+      <button (click)="showAmount($event)">Show</button>
+    </div>
+    <br><br>
+    <div>
+      <label for="amount">Total amount:</label>
+      <input type="text" id="amount" [value]="amount !== null ? amount : ''" readonly>
+    </div>
+    <br><br>
+    <div>
+      <label for="paidAmount">Paid Amount:</label>
+      <input type="number" id="paidAmount" (input)="paidAmount = $any($event.target).valueAsNumber" >
+    </div>
+    <br><br>
+    <button (click)="submitPayment($event)">Submit</button>
+  </form>

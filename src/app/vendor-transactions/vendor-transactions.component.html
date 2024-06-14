@@ -1,0 +1,28 @@
+<div class="section-title" id="Register-Farmer">
+  <h2>Vendor Payments</h2>
+</div>
+
+<form (submit)="onSubmit($event)">
+  <div>
+    <label for="VendorID">Vendor ID:</label>
+    <input type="text" id="VendorID" name="VendorID" (input)="onVendorIdInput($event)" required> 
+    <button type="submit">Fetch Data</button>
+  </div>
+</form>
+
+<div class="container table-container" *ngIf="tableData.length > 0">
+  <div class="row tbl-fixed">
+    <table class="table">
+      <thead>
+        <tr>
+          <th *ngFor="let col of columnNames">{{ col }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let row of tableData">
+          <td *ngFor="let col of columnNames">{{ row[col] }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
