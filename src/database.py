@@ -812,5 +812,317 @@ def submitoverhead():
         name = request.args.get('name')
         return "success get "+name
 
+# Add raw materials
+@app.route('/submitrawmaterial', methods=['POST'])
+def submitrawmaterial():
+    if request.method == 'POST':
+        # Initialize an empty dictionary to store form data
+        data = {}
+        print(request.form.get('MilkCM500RolePrice'))
+        # List of input fields to process
+        input_fields = [
+            'MilkCM500RolePrice', 'MilkCM500RoleQuantity',
+            'MilkCM200RolePrice', 'MilkCM200RoleQuantity',
+            'MilkTM500RolePrice', 'MilkTM500RoleQuantity',
+            'MilkTM200RolePrice', 'MilkTM200RoleQuantity',
+            'Lassi200RolePrice', 'Lassi200RoleQuantity',
+            'LassiCUP200cupPrice', 'LassiCUP200cupQuantity',
+            'LassiMANGOCUP200cupPrice', 'LassiMANGOCUP200cupQuantity',
+            'Dahi200MLRolePrice', 'Dahi200MLRoleQuantity',
+            'Dahi500MLRolePrice', 'Dahi500MLRoleQuantity',
+            'Dahi2LTBucketPrice', 'Dahi2LTBucketQuantity',
+            'Dahi5LTBucketPrice', 'Dahi5LTBucketQuantity',
+            'Dahi10LTBucketPrice', 'Dahi10LTBucketQuantity',
+            'Dahi2LT1.5BucketPrice', 'Dahi2LT1.5BucketQuantity',
+            'Dahi5LT1.5BucketPrice', 'Dahi5LT1.5BucketQuantity',
+            'Dahi10LT1.5BucketPrice', 'Dahi10LT1.5BucketQuantity',
+            'ButtermilkRolePrice', 'ButtermilkRoleQuantity',
+            'Khova500TinPrice', 'Khova500TinQuantity',
+            'Khoya1000TinPrice', 'Khoya1000TinQuantity',
+            'Shrikhand100TinPrice', 'Shrikhand100TinQuantity',
+            'Shrikhand250TinPrice', 'Shrikhand250TinQuantity',
+            'Ghee200TinPrice', 'Ghee200TinQuantity',
+            'Ghee500TinPrice', 'Ghee500TinQuantity',
+            'Ghee15LTTinPrice', 'Ghee15LTTinQuantity',
+            'PaneerloosePrice', 'PaneerlooseQuantity',
+            'khovaloosePrice', 'khovalooseQuantity',
+            'LASSI_CUP_FOILPrice', 'LASSI_CUP_FOILQuantity',
+            'IFF_FLAVER_MANGOPrice', 'IFF_FLAVER_MANGOQuantity',
+            'IFF_FLAVER_VANILLAPrice', 'IFF_FLAVER_VANILLAQuantity',
+            'CULTURE_AMAZIKAPrice', 'CULTURE_AMAZIKAQuantity',
+            'CULTURE_DANISKOPrice', 'CULTURE_DANISKOQuantity',
+            'CULTURE_HRPrice', 'CULTURE_HRQuantity',
+            'LIQUID_SOAPPrice', 'LIQUID_SOAPQuantity',
+            'COS_SODAPrice', 'COS_SODAQuantity',
+            'KAOH_Price', 'KAOH_Quantity'
+        ]
+        fieldc=0
+        
+        # Iterate over each input field and retrieve its value
+        for field in input_fields:
+            value = request.form.get(field, '0')
+            print('here',value)
+            #print(value,field,fieldc)
+            
+            try:
+                data[field] = int(value)
+                #print(data[field])
+                fieldc+=1
+                
+            except ValueError:
+                data[field] = 0
+                #print(data[field])
+                fieldc+=1
+        print(fieldc)
+        # Insert into MySQL
+        cur = mysql.connection.cursor()
+        try:
+            x=['MilkCM500RoleQuan', 'MilkCM500RolePrice', 'MilkCM200RoleQuan', 'MilkCM200RolePrice',
+        'MilkTM500RoleQuan', 'MilkTM500RolePrice', 'MilkTM200RoleQuan', 'MilkTM200RolePrice',
+        'Lassi200RoleQuan', 'Lassi200RolePrice', 'LassiCUP200cupQuan', 'LassiCUP200cupPrice',
+        'LassiMANGOCUP200cupQuan', 'LassiMANGOCUP200cupPrice', 'Dahi200MLRoleQuan', 'Dahi200MLRolePrice',
+        'Dahi500MLRoleQuan', 'Dahi500MLRolePrice', 'Dahi2LTBucketQuan', 'Dahi2LTBucketPrice',
+        'Dahi5LTBucketQuan', 'Dahi5LTBucketPrice', 'Dahi10LTBucketQuan', 'Dahi10LTBucketPrice',
+        'Dahi2LT1_5BucketQuan', 'Dahi2LT1_5BucketPrice', 'Dahi5LT1_5BucketQuan', 'Dahi5LT1_5BucketPrice',
+        'Dahi10LT1_5BucketQuan', 'Dahi10LT1_5BucketPrice', 'ButtermilkRoleQuan', 'ButtermilkRolePrice',
+        'Khova500TinQuan', 'Khova500TinPrice', 'Khoya1000TinQuan', 'Khoya1000TinPrice',
+        'Shrikhand100TinQuan', 'Shrikhand100TinPrice', 'Shrikhand250TinQuan', 'Shrikhand250TinPrice',
+        'Ghee200TinQuan', 'Ghee200TinPrice', 'Ghee500TinQuan', 'Ghee500TinPrice',
+        'Ghee15LTTinQuan', 'Ghee15LTTinPrice', 'PaneerlooseQuan', 'PaneerloosePrice',
+        'khovalooseQuan', 'khovaloosePrice', 'LASSICUPFOILQuan', 'LASSICUPFOILPrice',
+        'IFFFLAVERMANGOQuan', 'IFFFLAVERMANGOPrice', 'IFFFLAVERVANILLAQuan', 'IFFFLAVERVANILLAPrice',
+        'CULTUREAMAZIKAQuan', 'CULTUREAMAZIKAPrice', 'CULTUREDANISKOQuan', 'CULTUREDANISKOPrice',
+        'CULTUREHRQuan', 'CULTUREHRPrice', 'LIQUIDSOAPQuan', 'LIQUIDSOAPPrice',
+        'COSSODAQuan', 'COSSODAPrice', 'KAOHQuan', 'KAOHPrice']
+            #print("here",len(x))
+            query = """
+    INSERT INTO raw_materials (buydate,
+        MilkCM500RoleQuan, MilkCM500RolePrice, MilkCM200RoleQuan, MilkCM200RolePrice,
+        MilkTM500RoleQuan, MilkTM500RolePrice, MilkTM200RoleQuan, MilkTM200RolePrice,
+        Lassi200RoleQuan, Lassi200RolePrice, LassiCUP200cupQuan, LassiCUP200cupPrice,
+        LassiMANGOCUP200cupQuan, LassiMANGOCUP200cupPrice, Dahi200MLRoleQuan, Dahi200MLRolePrice,
+        Dahi500MLRoleQuan, Dahi500MLRolePrice, Dahi2LTBucketQuan, Dahi2LTBucketPrice,
+        Dahi5LTBucketQuan, Dahi5LTBucketPrice, Dahi10LTBucketQuan, Dahi10LTBucketPrice,
+        Dahi2LT1_5BucketQuan, Dahi2LT1_5BucketPrice, Dahi5LT1_5BucketQuan, Dahi5LT1_5BucketPrice,
+        Dahi10LT1_5BucketQuan, Dahi10LT1_5BucketPrice, ButtermilkRoleQuan, ButtermilkRolePrice,
+        Khova500TinQuan, Khova500TinPrice, Khoya1000TinQuan, Khoya1000TinPrice,
+        Shrikhand100TinQuan, Shrikhand100TinPrice, Shrikhand250TinQuan, Shrikhand250TinPrice,
+        Ghee200TinQuan, Ghee200TinPrice, Ghee500TinQuan, Ghee500TinPrice,
+        Ghee15LTTinQuan, Ghee15LTTinPrice, PaneerlooseQuan, PaneerloosePrice,
+        khovalooseQuan, khovaloosePrice, LASSICUPFOILQuan, LASSICUPFOILPrice,
+        IFFFLAVERMANGOQuan, IFFFLAVERMANGOPrice, IFFFLAVERVANILLAQuan, IFFFLAVERVANILLAPrice,
+        CULTUREAMAZIKAQuan, CULTUREAMAZIKAPrice, CULTUREDANISKOQuan, CULTUREDANISKOPrice,
+        CULTUREHRQuan, CULTUREHRPrice, LIQUIDSOAPQuan, LIQUIDSOAPPrice,
+        COSSODAQuan, COSSODAPrice, KAOHQuan, KAOHPrice
+    ) VALUES (
+        curdate(),%d, %d, %d, %d, %d, %d, %d, %d, %d, %d,
+        %d, %d, %d, %d, %d, %d, %d, %d, %d, %d,
+        %d, %d, %d, %d, %d, %d, %d, %d, %d, %d,
+        %d, %d, %d, %d, %d, %d, %d, %d, %d, %d,
+        %d, %d, %d, %d, %d, %d, %d, %d, %d, %d,
+        %d, %d, %d, %d, %d, %d, %d, %d, %d, %d,
+        %d, %d, %d, %d, %d, %d, %d, %d
+        )
+"""
+
+            print(tuple(data.values()))
+            cur.execute(query%(tuple(data.values())))
+            mysql.connection.commit()
+            cur.close()
+            return """
+            <script type="text/javascript"> 
+            alert("Successfully submitted raw materials");
+            </script>
+            """
+        except Exception as e:
+            print(f"Error inserting into database: {e}")
+            return """
+            <script type="text/javascript"> 
+            alert("An error occurred while submitting raw materials");
+            </script>
+            """
+    else:
+        return "Method not allowed"
+    
+@app.route('/show_raw_materials', methods=['GET'])
+def get_datasr():
+    cur = mysql.connection.cursor()
+    cur.execute("""SELECT buydate,
+    MilkCM500RoleQuan, MilkCM500RolePrice, MilkCM200RoleQuan, MilkCM200RolePrice,
+    MilkTM500RoleQuan, MilkTM500RolePrice, MilkTM200RoleQuan, MilkTM200RolePrice,
+    Lassi200RoleQuan, Lassi200RolePrice, LassiCUP200cupQuan, LassiCUP200cupPrice,
+    LassiMANGOCUP200cupQuan, LassiMANGOCUP200cupPrice, Dahi200MLRoleQuan, Dahi200MLRolePrice,
+    Dahi500MLRoleQuan, Dahi500MLRolePrice, Dahi2LTBucketQuan, Dahi2LTBucketPrice,
+    Dahi5LTBucketQuan, Dahi5LTBucketPrice, Dahi10LTBucketQuan, Dahi10LTBucketPrice,
+    Dahi2LT1_5BucketQuan, Dahi2LT1_5BucketPrice, Dahi5LT1_5BucketQuan, Dahi5LT1_5BucketPrice,
+    Dahi10LT1_5BucketQuan, Dahi10LT1_5BucketPrice, ButtermilkRoleQuan, ButtermilkRolePrice,
+    Khova500TinQuan, Khova500TinPrice, Khoya1000TinQuan, Khoya1000TinPrice,
+    Shrikhand100TinQuan, Shrikhand100TinPrice, Shrikhand250TinQuan, Shrikhand250TinPrice,
+    Ghee200TinQuan, Ghee200TinPrice, Ghee500TinQuan, Ghee500TinPrice,
+    Ghee15LTTinQuan, Ghee15LTTinPrice, PaneerlooseQuan, PaneerloosePrice,
+    khovalooseQuan, khovaloosePrice, LASSICUPFOILQuan, LASSICUPFOILPrice,
+    IFFFLAVERMANGOQuan, IFFFLAVERMANGOPrice, IFFFLAVERVANILLAQuan, IFFFLAVERVANILLAPrice,
+    CULTUREAMAZIKAQuan, CULTUREAMAZIKAPrice, CULTUREDANISKOQuan, CULTUREDANISKOPrice,
+    CULTUREHRQuan, CULTUREHRPrice, LIQUIDSOAPQuan, LIQUIDSOAPPrice,
+    COSSODAQuan, COSSODAPrice, KAOHQuan, KAOHPrice FROM raw_materials""")
+    rows = cur.fetchall()
+    cur.close()
+    #print(rows)
+
+    # Convert to JSON-compatible format
+    data = []
+    for row in rows:
+        data.append({
+            'buydate':row[0],'MilkCM500RoleQuan': row[1], 'MilkCM500RolePrice': row[2],
+    'MilkCM200RoleQuan': row[3], 'MilkCM200RolePrice': row[4],
+    'MilkTM500RoleQuan': row[5], 'MilkTM500RolePrice': row[6],
+    'MilkTM200RoleQuan': row[7], 'MilkTM200RolePrice': row[8],
+    'Lassi200RoleQuan': row[9], 'Lassi200RolePrice': row[10],
+    'LassiCUP200cupQuan': row[11], 'LassiCUP200cupPrice': row[12],
+    'LassiMANGOCUP200cupQuan': row[13], 'LassiMANGOCUP200cupPrice': row[14],
+    'Dahi200MLRoleQuan': row[15], 'Dahi200MLRolePrice': row[16],
+    'Dahi500MLRoleQuan': row[17], 'Dahi500MLRolePrice': row[18],
+    'Dahi2LTBucketQuan': row[19], 'Dahi2LTBucketPrice': row[20],
+    'Dahi5LTBucketQuan': row[21], 'Dahi5LTBucketPrice': row[22],
+    'Dahi10LTBucketQuan': row[23], 'Dahi10LTBucketPrice': row[24],
+    'Dahi2LT1_5BucketQuan': row[25], 'Dahi2LT1_5BucketPrice': row[26],
+    'Dahi5LT1_5BucketQuan': row[27], 'Dahi5LT1_5BucketPrice': row[28],
+    'Dahi10LT1_5BucketQuan': row[29], 'Dahi10LT1_5BucketPrice': row[30],
+    'ButtermilkRoleQuan': row[31], 'ButtermilkRolePrice': row[32],
+    'Khova500TinQuan': row[33], 'Khova500TinPrice': row[34],
+    'Khoya1000TinQuan': row[35], 'Khoya1000TinPrice': row[36],
+    'Shrikhand100TinQuan': row[37], 'Shrikhand100TinPrice': row[38],
+    'Shrikhand250TinQuan': row[39], 'Shrikhand250TinPrice': row[40],
+    'Ghee200TinQuan': row[41], 'Ghee200TinPrice': row[42],
+    'Ghee500TinQuan': row[43], 'Ghee500TinPrice': row[44],
+    'Ghee15LTTinQuan': row[45], 'Ghee15LTTinPrice': row[46],
+    'PaneerlooseQuan': row[47], 'PaneerloosePrice': row[48],
+    'khovalooseQuan': row[49], 'khovaloosePrice': row[50],
+    'LASSICUPFOILQuan': row[51], 'LASSICUPFOILPrice': row[52],
+    'IFFFLAVERMANGOQuan': row[53], 'IFFFLAVERMANGOPrice': row[54],
+    'IFFFLAVERVANILLAQuan': row[55], 'IFFFLAVERVANILLAPrice': row[56],
+    'CULTUREAMAZIKAQuan': row[57], 'CULTUREAMAZIKAPrice': row[58],
+    'CULTUREDANISKOQuan': row[59], 'CULTUREDANISKOPrice': row[60],
+    'CULTUREHRQuan': row[61], 'CULTUREHRPrice': row[62],
+    'LIQUIDSOAPQuan': row[63], 'LIQUIDSOAPPrice': row[64],
+    'COSSODAQuan': row[65], 'COSSODAPrice': row[66],
+    'KAOHQuan': row[67], 'KAOHPrice': row[68]
+        })
+
+    return jsonify(data)
+
+# Add raw materials
+@app.route('/userawmaterial', methods=['POST'])
+def userawmaterial():
+    if request.method == 'POST':
+        quantities = [
+            "MilkCM500RoleQuantity",
+            "MilkCM200RoleQuantity",
+            "MilkTM500RoleQuantity",
+            "MilkTM200RoleQuantity",
+            "Lassi200RoleQuantity",
+            "LassiCUP200cupQuantity",
+            "LassiMANGOCUP200cupQuantity",
+            "Dahi200MLRoleQuantity",
+            "Dahi500MLRoleQuantity",
+            "Dahi2LTBucketQuantity",
+            "Dahi5LTBucketQuantity",
+            "Dahi10LTBucketQuantity",
+            "Dahi2LT1.5BucketQuantity",
+            "Dahi5LT1.5BucketQuantity",
+            "Dahi10LT1.5BucketQuantity",
+            "ButtermilkRoleQuantity",
+            "Khova500TinQuantity",
+            "Khoya1000TinQuantity",
+            "Shrikhand100TinQuantity",
+            "Shrikhand250TinQuantity", 
+            "Ghee200TinQuantity",
+            "Ghee500TinQuantity",
+            "Ghee15LTTinQuantity",
+            "PaneerlooseQuantity",
+            "khovalooseQuantity",
+            "LASSI CUP FOIL Quantity",
+            "IFF FLAVER MANGO Quantity",
+            "IFF FLAVER VANILLA Quantity",
+            "CULTURE AMAZIKA Quantity",
+            "CULTURE DANISKO Quantity",
+            "CULTURE HR Quantity",
+            "LIQUID SOAP Quantity",
+            "COS SODA Quantity",
+            "KAOHQuantity"
+        ]
+        fieldc=0
+        data={}
+        print(quantities,len(quantities))
+
+        for field in quantities:
+                value = request.form.get(field, '0')
+                
+                try:
+                    data[field] = int(value)
+                    fieldc+=1
+                    
+                except ValueError:
+                    data[field] = 0
+                    fieldc+=1
+        print(data)
+        cur = mysql.connection.cursor()
+        try:
+            query="""
+                    update raw_materials set MilkCM500RoleQuan=MilkCM500RoleQuan-%d,
+                    MilkCM200RoleQuan=MilkCM200RoleQuan-%d,
+                    MilkTM500RoleQuan=MilkTM500RoleQuan-%d,
+                    MilkTM200RoleQuan=MilkTM200RoleQuan-%d,
+                    Lassi200RoleQuan=Lassi200RoleQuan-%d,
+                    LassiCUP200cupQuan=LassiCUP200cupQuan-%d,
+                    LassiMANGOCUP200cupQuan=LassiMANGOCUP200cupQuan-%d,
+                    Dahi200MLRoleQuan=Dahi200MLRoleQuan-%d,
+                    Dahi500MLRoleQuan=Dahi500MLRoleQuan-%d,
+                    Dahi2LTBucketQuan=Dahi2LTBucketQuan-%d,
+                    Dahi5LTBucketQuan=Dahi5LTBucketQuan-%d,
+                    Dahi10LTBucketQuan=Dahi10LTBucketQuan-%d,
+                    Dahi2LT1_5BucketQuan=Dahi2LT1_5BucketQuan-%d,
+                    Dahi5LT1_5BucketQuan=Dahi5LT1_5BucketQuan-%d,
+                    Dahi10LT1_5BucketQuan=Dahi10LT1_5BucketQuan-%d,
+                    ButtermilkRoleQuan=ButtermilkRoleQuan-%d,
+                    Khova500TinQuan=Khova500TinQuan-%d,
+                    Khoya1000TinQuan=Khoya1000TinQuan-%d,
+                    Shrikhand100TinQuan=Shrikhand100TinQuan-%d,
+                    Shrikhand250TinQuan=Shrikhand250TinQuan-%d,
+                    Ghee200TinQuan=Ghee200TinQuan-%d,
+                    Ghee500TinQuan=Ghee500TinQuan-%d,
+                    Ghee15LTTinQuan=Ghee15LTTinQuan-%d,
+                    PaneerlooseQuan=PaneerlooseQuan-%d,
+                    khovalooseQuan=khovalooseQuan-%d,
+                    LASSICUPFOILQuan=LASSICUPFOILQuan-%d,
+                    IFFFLAVERMANGOQuan=IFFFLAVERMANGOQuan-%d,
+                    IFFFLAVERVANILLAQuan=IFFFLAVERVANILLAQuan-%d,
+                    CULTUREAMAZIKAQuan=CULTUREAMAZIKAQuan-%d,
+                    CULTUREDANISKOQuan=CULTUREDANISKOQuan-%d,
+                    CULTUREHRQuan=CULTUREHRQuan-%d,
+                    LIQUIDSOAPQuan=LIQUIDSOAPQuan-%d,
+                    COSSODAQuan=COSSODAQuan-%d,
+                    KAOHQuan=KAOHQuan-%d where buydate=curdate()
+                """
+            print(tuple(data.values()))
+            cur.execute(query%(tuple(data.values())))
+            mysql.connection.commit()
+            cur.close()
+            return """
+            <script type="text/javascript"> 
+            alert("Successfully submitted raw materials");
+            </script>
+            """
+        except Exception as e:
+            print(f"Error inserting into database: {e}")
+            return """
+            <script type="text/javascript"> 
+            alert("An error occurred while submitting raw materials");
+            </script>
+            """
+    else:
+        return "Method not allowed"
+
+
 if __name__ == '__main__':
     app.run(debug=True)
