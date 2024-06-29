@@ -1052,60 +1052,133 @@ def userawmaterial():
             "KAOHQuantity"
         ]
         fieldc=0
-        data={}
-        print(quantities,len(quantities))
+        datar={}
+        #print(quantities,len(quantities))
 
         for field in quantities:
                 value = request.form.get(field, '0')
                 
                 try:
-                    data[field] = int(value)
+                    datar[field] = int(value)
                     fieldc+=1
                     
                 except ValueError:
-                    data[field] = 0
+                    datar[field] = 0
                     fieldc+=1
-        print(data)
+        
         cur = mysql.connection.cursor()
         try:
             query="""
-                    update raw_materials set MilkCM500RoleQuan=MilkCM500RoleQuan-%d,
-                    MilkCM200RoleQuan=MilkCM200RoleQuan-%d,
-                    MilkTM500RoleQuan=MilkTM500RoleQuan-%d,
-                    MilkTM200RoleQuan=MilkTM200RoleQuan-%d,
-                    Lassi200RoleQuan=Lassi200RoleQuan-%d,
-                    LassiCUP200cupQuan=LassiCUP200cupQuan-%d,
-                    LassiMANGOCUP200cupQuan=LassiMANGOCUP200cupQuan-%d,
-                    Dahi200MLRoleQuan=Dahi200MLRoleQuan-%d,
-                    Dahi500MLRoleQuan=Dahi500MLRoleQuan-%d,
-                    Dahi2LTBucketQuan=Dahi2LTBucketQuan-%d,
-                    Dahi5LTBucketQuan=Dahi5LTBucketQuan-%d,
-                    Dahi10LTBucketQuan=Dahi10LTBucketQuan-%d,
-                    Dahi2LT1_5BucketQuan=Dahi2LT1_5BucketQuan-%d,
-                    Dahi5LT1_5BucketQuan=Dahi5LT1_5BucketQuan-%d,
-                    Dahi10LT1_5BucketQuan=Dahi10LT1_5BucketQuan-%d,
-                    ButtermilkRoleQuan=ButtermilkRoleQuan-%d,
-                    Khova500TinQuan=Khova500TinQuan-%d,
-                    Khoya1000TinQuan=Khoya1000TinQuan-%d,
-                    Shrikhand100TinQuan=Shrikhand100TinQuan-%d,
-                    Shrikhand250TinQuan=Shrikhand250TinQuan-%d,
-                    Ghee200TinQuan=Ghee200TinQuan-%d,
-                    Ghee500TinQuan=Ghee500TinQuan-%d,
-                    Ghee15LTTinQuan=Ghee15LTTinQuan-%d,
-                    PaneerlooseQuan=PaneerlooseQuan-%d,
-                    khovalooseQuan=khovalooseQuan-%d,
-                    LASSICUPFOILQuan=LASSICUPFOILQuan-%d,
-                    IFFFLAVERMANGOQuan=IFFFLAVERMANGOQuan-%d,
-                    IFFFLAVERVANILLAQuan=IFFFLAVERVANILLAQuan-%d,
-                    CULTUREAMAZIKAQuan=CULTUREAMAZIKAQuan-%d,
-                    CULTUREDANISKOQuan=CULTUREDANISKOQuan-%d,
-                    CULTUREHRQuan=CULTUREHRQuan-%d,
-                    LIQUIDSOAPQuan=LIQUIDSOAPQuan-%d,
-                    COSSODAQuan=COSSODAQuan-%d,
-                    KAOHQuan=KAOHQuan-%d where buydate=curdate()
+                SELECT 
+                SUM(MilkCM500RoleQuan),
+                SUM(MilkCM200RoleQuan),
+                SUM(MilkTM500RoleQuan),
+                SUM(MilkTM200RoleQuan),
+                SUM(Lassi200RoleQuan),
+                SUM(LassiCUP200cupQuan),
+                SUM(LassiMANGOCUP200cupQuan),
+                SUM(Dahi200MLRoleQuan),
+                SUM(Dahi500MLRoleQuan),
+                SUM(Dahi2LTBucketQuan),
+                SUM(Dahi5LTBucketQuan),
+                SUM(Dahi10LTBucketQuan),
+                SUM(Dahi2LT1_5BucketQuan),
+                SUM(Dahi5LT1_5BucketQuan),
+                SUM(Dahi10LT1_5BucketQuan),
+                SUM(ButtermilkRoleQuan),
+                SUM(Khova500TinQuan),
+                SUM(Khoya1000TinQuan),
+                SUM(Shrikhand100TinQuan),
+                SUM(Shrikhand250TinQuan),
+                SUM(Ghee200TinQuan),
+                SUM(Ghee500TinQuan),
+                SUM(Ghee15LTTinQuan),
+                SUM(PaneerlooseQuan),
+                SUM(khovalooseQuan),
+                SUM(LASSICUPFOILQuan),
+                SUM(IFFFLAVERMANGOQuan),
+                SUM(IFFFLAVERVANILLAQuan),
+                SUM(CULTUREAMAZIKAQuan),
+                SUM(CULTUREDANISKOQuan),
+                SUM(CULTUREHRQuan),
+                SUM(LIQUIDSOAPQuan),
+                SUM(COSSODAQuan),
+                SUM(KAOHQuan)
+                FROM raw_materials;
+
                 """
-            print(tuple(data.values()))
-            cur.execute(query%(tuple(data.values())))
+            cur.execute(query)
+            rows = cur.fetchall()
+            #print(rows)
+            data=[]
+            for row in rows:
+                data.append({
+                    'MilkCM500RoleQuan': row[0],
+                    'MilkCM200RoleQuan': row[1],
+                    'MilkTM500RoleQuan': row[2],
+                    'MilkTM200RoleQuan': row[3],
+                    'Lassi200RoleQuan': row[4],
+                    'LassiCUP200cupQuan': row[5],
+                    'LassiMANGOCUP200cupQuan': row[6],
+                    'Dahi200MLRoleQuan': row[7],
+                    'Dahi500MLRoleQuan': row[8],
+                    'Dahi2LTBucketQuan': row[9],
+                    'Dahi5LTBucketQuan': row[10],
+                    'Dahi10LTBucketQuan': row[11],
+                    'Dahi2LT1_5BucketQuan': row[12],
+                    'Dahi5LT1_5BucketQuan': row[13],
+                    'Dahi10LT1_5BucketQuan': row[14],
+                    'ButtermilkRoleQuan': row[15],
+                    'Khova500TinQuan': row[16],
+                    'Khoya1000TinQuan': row[17],
+                    'Shrikhand100TinQuan': row[18],
+                    'Shrikhand250TinQuan': row[19],
+                    'Ghee200TinQuan': row[20],
+                    'Ghee500TinQuan': row[21],
+                    'Ghee15LTTinQuan': row[22],
+                    'PaneerlooseQuan': row[23],
+                    'khovalooseQuan': row[24],
+                    'LASSICUPFOILQuan': row[25],
+                    'IFFFLAVERMANGOQuan': row[26],
+                    'IFFFLAVERVANILLAQuan': row[27],
+                    'CULTUREAMAZIKAQuan': row[28],
+                    'CULTUREDANISKOQuan': row[29],
+                    'CULTUREHRQuan': row[30],
+                    'LIQUIDSOAPQuan': row[31],
+                    'COSSODAQuan': row[32],
+                    'KAOHQuan': row[33]
+                }
+                )
+            data=data[0].values()
+            
+            datar=[float(value) for value in datar.values()]
+            data=[float(value) for value in data]
+            print(datar,type(datar))
+            print(data,type(data))
+            result=[x - y for x, y in zip(data, datar)]
+            print(tuple(result))
+            query="""
+                INSERT INTO use_raw_materials (
+                    usedate,
+                    MilkCM500RoleQuan, MilkCM200RoleQuan, MilkTM500RoleQuan, MilkTM200RoleQuan,
+                    Lassi200RoleQuan, LassiCUP200cupQuan, LassiMANGOCUP200cupQuan,
+                    Dahi200MLRoleQuan, Dahi500MLRoleQuan, Dahi2LTBucketQuan,
+                    Dahi5LTBucketQuan, Dahi10LTBucketQuan, Dahi2LT1_5BucketQuan,
+                    Dahi5LT1_5BucketQuan, Dahi10LT1_5BucketQuan, ButtermilkRoleQuan,
+                    Khova500TinQuan, Khoya1000TinQuan, Shrikhand100TinQuan,
+                    Shrikhand250TinQuan, Ghee200TinQuan, Ghee500TinQuan,
+                    Ghee15LTTinQuan, PaneerlooseQuan, khovalooseQuan,
+                    LASSICUPFOILQuan, IFFFLAVERMANGOQuan, IFFFLAVERVANILLAQuan,
+                    CULTUREAMAZIKAQuan, CULTUREDANISKOQuan, CULTUREHRQuan,
+                    LIQUIDSOAPQuan, COSSODAQuan, KAOHQuan
+                ) VALUES (
+                    curdate(), %d, %d, %d, %d, %d, %d, %d, %d, %d, %d,
+                    %d, %d, %d, %d, %d, %d, %d, %d, %d, %d,
+                    %d, %d, %d, %d, %d, %d, %d, %d, %d, %d,
+                    %d, %d, %d, %d
+                )                 
+                """
+            cur.execute(query%tuple(result))
             mysql.connection.commit()
             cur.close()
             return """
