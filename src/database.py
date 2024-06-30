@@ -4,6 +4,7 @@ from flask_cors import CORS
 from datetime import datetime 
 import logging
 import mysql.connector
+import datetime
 
 
 app = Flask(__name__)
@@ -861,7 +862,7 @@ def submitrawmaterial():
         # Iterate over each input field and retrieve its value
         for field in input_fields:
             value = request.form.get(field, '0')
-            print('here',value)
+            #print('here',value)
             #print(value,field,fieldc)
             
             try:
@@ -873,7 +874,7 @@ def submitrawmaterial():
                 data[field] = 0
                 #print(data[field])
                 fieldc+=1
-        print(fieldc)
+        #print(fieldc)
         # Insert into MySQL
         cur = mysql.connection.cursor()
         try:
@@ -924,10 +925,162 @@ def submitrawmaterial():
         %d, %d, %d, %d, %d, %d, %d, %d
         )
 """
-
-            print(tuple(data.values()))
+            #print(data, type(data))
+            #print(tuple(data.values()))
+            quantity_elements = {k: v for k, v in data.items() if 'Quantity' in k}
+            #print("quantity elements:",tuple(quantity_elements.values()),len(tuple(quantity_elements.values())),type(quantity_elements))
             cur.execute(query%(tuple(data.values())))
             mysql.connection.commit()
+            q="SELECT MAX(date) AS last_inserted_date FROM oasis.total_rawmaterials;"
+            cur.execute(q)
+            day=cur.fetchone()
+            print("idhar dekhooooo:",day[0],type(day))
+
+            
+            curdate=datetime.datetime.now().date()
+            tot_date=None
+            
+            
+
+            def get_tot_date():
+                query="""
+                select * from total_rawmaterials where date='%s'; 
+                """
+                cur.execute(query%day[0])
+                rows=cur.fetchall()
+                data = []
+                for row in rows:
+                    tot_date=row[0]
+                
+                print("i am a date:",tot_date)
+                return tot_date
+            
+            print(get_tot_date(),curdate)
+            if day[0]==None:
+                print("I am in day[0]=None")
+                query="""
+                    INSERT INTO total_rawmaterials (
+                    date,
+                    MilkCM500RoleQuan, MilkCM200RoleQuan, MilkTM500RoleQuan, MilkTM200RoleQuan,
+                    Lassi200RoleQuan, LassiCUP200cupQuan, LassiMANGOCUP200cupQuan,
+                    Dahi200MLRoleQuan, Dahi500MLRoleQuan, Dahi2LTBucketQuan,
+                    Dahi5LTBucketQuan, Dahi10LTBucketQuan, Dahi2LT1_5BucketQuan,
+                    Dahi5LT1_5BucketQuan, Dahi10LT1_5BucketQuan, ButtermilkRoleQuan,
+                    Khova500TinQuan, Khoya1000TinQuan, Shrikhand100TinQuan,
+                    Shrikhand250TinQuan, Ghee200TinQuan, Ghee500TinQuan,
+                    Ghee15LTTinQuan, PaneerlooseQuan, khovalooseQuan,
+                    LASSICUPFOILQuan, IFFFLAVERMANGOQuan, IFFFLAVERVANILLAQuan,
+                    CULTUREAMAZIKAQuan, CULTUREDANISKOQuan, CULTUREHRQuan,
+                    LIQUIDSOAPQuan, COSSODAQuan, KAOHQuan
+                ) VALUES (
+                    curdate(), %d, %d, %d, %d, %d, %d, %d, %d, %d, %d,
+                    %d, %d, %d, %d, %d, %d, %d, %d, %d, %d,
+                    %d, %d, %d, %d, %d, %d, %d, %d, %d, %d,
+                    %d, %d, %d, %d
+                )                 
+                """
+                
+                cur.execute(query%tuple(quantity_elements.values()))
+                mysql.connection.commit()
+            elif get_tot_date()==curdate:
+                print(get_tot_date(),curdate)
+                query="""
+                    update total_rawmaterials
+                    set MilkCM500RoleQuan=MilkCM500RoleQuan+%d, MilkCM200RoleQuan=MilkCM200RoleQuan+%d, MilkTM500RoleQuan=MilkTM500RoleQuan+%d,
+                    MilkTM200RoleQuan=MilkTM200RoleQuan+%d, Lassi200RoleQuan=Lassi200RoleQuan+%d, LassiCUP200cupQuan=LassiCUP200cupQuan+%d,
+                    LassiMANGOCUP200cupQuan=LassiMANGOCUP200cupQuan+%d, Dahi200MLRoleQuan=Dahi200MLRoleQuan+%d, Dahi500MLRoleQuan=Dahi500MLRoleQuan+%d,
+                    Dahi2LTBucketQuan=Dahi2LTBucketQuan+%d, Dahi5LTBucketQuan=Dahi5LTBucketQuan+%d, Dahi10LTBucketQuan=Dahi10LTBucketQuan+%d,
+                    Dahi2LT1_5BucketQuan=Dahi2LT1_5BucketQuan+%d, Dahi5LT1_5BucketQuan=Dahi5LT1_5BucketQuan+%d, Dahi10LT1_5BucketQuan=Dahi10LT1_5BucketQuan+%d,
+                    ButtermilkRoleQuan=ButtermilkRoleQuan+%d, Khova500TinQuan=Khova500TinQuan+%d, Khoya1000TinQuan=Khoya1000TinQuan+%d,
+                    Shrikhand100TinQuan=Shrikhand100TinQuan+%d, Shrikhand250TinQuan=Shrikhand250TinQuan+%d, Ghee200TinQuan=Ghee200TinQuan+%d,
+                    Ghee500TinQuan=Ghee500TinQuan+%d, Ghee15LTTinQuan=Ghee15LTTinQuan+%d, PaneerlooseQuan=PaneerlooseQuan+%d,
+                    khovalooseQuan=khovalooseQuan+%d, LASSICUPFOILQuan=LASSICUPFOILQuan+%d, IFFFLAVERMANGOQuan=IFFFLAVERMANGOQuan+%d,
+                    IFFFLAVERVANILLAQuan=IFFFLAVERVANILLAQuan+%d, CULTUREAMAZIKAQuan=CULTUREAMAZIKAQuan+%d, CULTUREDANISKOQuan=CULTUREDANISKOQuan+%d,
+                    CULTUREHRQuan=CULTUREHRQuan+%d, LIQUIDSOAPQuan=LIQUIDSOAPQuan+%d, COSSODAQuan=COSSODAQuan+%d, KAOHQuan=KAOHQuan+%d
+                    where date=curdate()
+                    """
+                cur.execute(query%tuple(quantity_elements.values()))
+                mysql.connection.commit()
+            else:
+                query="""
+                select * from total_rawmaterials where date='%s'; 
+                """
+                cur.execute(query%day[0])
+                rows=cur.fetchall()
+                data = []
+                for row in rows:
+                    
+                    data.append({
+                        
+                        'MilkCM500RoleQuan': row[1],
+                        'MilkCM200RoleQuan': row[2],
+                        'MilkTM500RoleQuan': row[3],
+                        'MilkTM200RoleQuan': row[4],
+                        'Lassi200RoleQuan': row[5],
+                        'LassiCUP200cupQuan': row[6],
+                        'LassiMANGOCUP200cupQuan': row[7],
+                        'Dahi200MLRoleQuan': row[8],
+                        'Dahi500MLRoleQuan': row[9],
+                        'Dahi2LTBucketQuan': row[10],
+                        'Dahi5LTBucketQuan': row[11],
+                        'Dahi10LTBucketQuan': row[12],
+                        'Dahi2LT1_5BucketQuan': row[13],
+                        'Dahi5LT1_5BucketQuan': row[14],
+                        'Dahi10LT1_5BucketQuan': row[15],
+                        'ButtermilkRoleQuan': row[16],
+                        'Khova500TinQuan': row[17],
+                        'Khoya1000TinQuan': row[18],
+                        'Shrikhand100TinQuan': row[19],
+                        'Shrikhand250TinQuan': row[20],
+                        'Ghee200TinQuan': row[21],
+                        'Ghee500TinQuan': row[22],
+                        'Ghee15LTTinQuan': row[23],
+                        'PaneerlooseQuan': row[24],
+                        'khovalooseQuan': row[25],
+                        'LASSICUPFOILQuan': row[26],
+                        'IFFFLAVERMANGOQuan': row[27],
+                        'IFFFLAVERVANILLAQuan': row[28],
+                        'CULTUREAMAZIKAQuan': row[29],
+                        'CULTUREDANISKOQuan': row[30],
+                        'CULTUREHRQuan': row[31],
+                        'LIQUIDSOAPQuan': row[32],
+                        'COSSODAQuan': row[33],
+                        'KAOHQuan': row[34]
+
+                    })
+                print(data[0],type(data[0]))
+                data=[float(value) for value in data[0].values()]
+                print(data)
+                datar=[float(value) for value in quantity_elements.values()]
+                print(datar)
+                result=[x + y for x, y in zip(data, datar)]
+                print(tuple(result))
+                
+                query="""
+                    INSERT INTO total_rawmaterials (
+                    date,
+                    MilkCM500RoleQuan, MilkCM200RoleQuan, MilkTM500RoleQuan, MilkTM200RoleQuan,
+                    Lassi200RoleQuan, LassiCUP200cupQuan, LassiMANGOCUP200cupQuan,
+                    Dahi200MLRoleQuan, Dahi500MLRoleQuan, Dahi2LTBucketQuan,
+                    Dahi5LTBucketQuan, Dahi10LTBucketQuan, Dahi2LT1_5BucketQuan,
+                    Dahi5LT1_5BucketQuan, Dahi10LT1_5BucketQuan, ButtermilkRoleQuan,
+                    Khova500TinQuan, Khoya1000TinQuan, Shrikhand100TinQuan,
+                    Shrikhand250TinQuan, Ghee200TinQuan, Ghee500TinQuan,
+                    Ghee15LTTinQuan, PaneerlooseQuan, khovalooseQuan,
+                    LASSICUPFOILQuan, IFFFLAVERMANGOQuan, IFFFLAVERVANILLAQuan,
+                    CULTUREAMAZIKAQuan, CULTUREDANISKOQuan, CULTUREHRQuan,
+                    LIQUIDSOAPQuan, COSSODAQuan, KAOHQuan
+                ) VALUES (
+                    curdate(), %d, %d, %d, %d, %d, %d, %d, %d, %d, %d,
+                    %d, %d, %d, %d, %d, %d, %d, %d, %d, %d,
+                    %d, %d, %d, %d, %d, %d, %d, %d, %d, %d,
+                    %d, %d, %d, %d
+                )                 
+                """
+                
+                cur.execute(query%tuple(result))
+                mysql.connection.commit()
+                
             cur.close()
             return """
             <script type="text/javascript"> 
@@ -1011,7 +1164,7 @@ def get_datasr():
 
     return jsonify(data)
 
-# Add raw materials
+# Use raw materials
 @app.route('/userawmaterial', methods=['POST'])
 def userawmaterial():
     if request.method == 'POST':
@@ -1070,42 +1223,18 @@ def userawmaterial():
         try:
             query="""
                 SELECT 
-                SUM(MilkCM500RoleQuan),
-                SUM(MilkCM200RoleQuan),
-                SUM(MilkTM500RoleQuan),
-                SUM(MilkTM200RoleQuan),
-                SUM(Lassi200RoleQuan),
-                SUM(LassiCUP200cupQuan),
-                SUM(LassiMANGOCUP200cupQuan),
-                SUM(Dahi200MLRoleQuan),
-                SUM(Dahi500MLRoleQuan),
-                SUM(Dahi2LTBucketQuan),
-                SUM(Dahi5LTBucketQuan),
-                SUM(Dahi10LTBucketQuan),
-                SUM(Dahi2LT1_5BucketQuan),
-                SUM(Dahi5LT1_5BucketQuan),
-                SUM(Dahi10LT1_5BucketQuan),
-                SUM(ButtermilkRoleQuan),
-                SUM(Khova500TinQuan),
-                SUM(Khoya1000TinQuan),
-                SUM(Shrikhand100TinQuan),
-                SUM(Shrikhand250TinQuan),
-                SUM(Ghee200TinQuan),
-                SUM(Ghee500TinQuan),
-                SUM(Ghee15LTTinQuan),
-                SUM(PaneerlooseQuan),
-                SUM(khovalooseQuan),
-                SUM(LASSICUPFOILQuan),
-                SUM(IFFFLAVERMANGOQuan),
-                SUM(IFFFLAVERVANILLAQuan),
-                SUM(CULTUREAMAZIKAQuan),
-                SUM(CULTUREDANISKOQuan),
-                SUM(CULTUREHRQuan),
-                SUM(LIQUIDSOAPQuan),
-                SUM(COSSODAQuan),
-                SUM(KAOHQuan)
-                FROM raw_materials;
-
+                MilkCM500RoleQuan, MilkCM200RoleQuan, MilkTM500RoleQuan, MilkTM200RoleQuan,
+                    Lassi200RoleQuan, LassiCUP200cupQuan, LassiMANGOCUP200cupQuan,
+                    Dahi200MLRoleQuan, Dahi500MLRoleQuan, Dahi2LTBucketQuan,
+                    Dahi5LTBucketQuan, Dahi10LTBucketQuan, Dahi2LT1_5BucketQuan,
+                    Dahi5LT1_5BucketQuan, Dahi10LT1_5BucketQuan, ButtermilkRoleQuan,
+                    Khova500TinQuan, Khoya1000TinQuan, Shrikhand100TinQuan,
+                    Shrikhand250TinQuan, Ghee200TinQuan, Ghee500TinQuan,
+                    Ghee15LTTinQuan, PaneerlooseQuan, khovalooseQuan,
+                    LASSICUPFOILQuan, IFFFLAVERMANGOQuan, IFFFLAVERVANILLAQuan,
+                    CULTUREAMAZIKAQuan, CULTUREDANISKOQuan, CULTUREHRQuan,
+                    LIQUIDSOAPQuan, COSSODAQuan, KAOHQuan
+                FROM total_rawmaterials where date=curdate();
                 """
             cur.execute(query)
             rows = cur.fetchall()
@@ -1178,7 +1307,25 @@ def userawmaterial():
                     %d, %d, %d, %d
                 )                 
                 """
+            cur.execute(query%tuple(datar))
+            query = """
+            UPDATE total_rawmaterials
+            SET MilkCM500RoleQuan=MilkCM500RoleQuan-%d, MilkCM200RoleQuan=MilkCM200RoleQuan-%d, MilkTM500RoleQuan=MilkTM500RoleQuan-%d,
+            MilkTM200RoleQuan=MilkTM200RoleQuan-%d, Lassi200RoleQuan=Lassi200RoleQuan-%d, LassiCUP200cupQuan=LassiCUP200cupQuan-%d,
+            LassiMANGOCUP200cupQuan=LassiMANGOCUP200cupQuan-%d, Dahi200MLRoleQuan=Dahi200MLRoleQuan-%d, Dahi500MLRoleQuan=Dahi500MLRoleQuan-%d,
+            Dahi2LTBucketQuan=Dahi2LTBucketQuan-%d, Dahi5LTBucketQuan=Dahi5LTBucketQuan-%d, Dahi10LTBucketQuan=Dahi10LTBucketQuan-%d,
+            Dahi2LT1_5BucketQuan=Dahi2LT1_5BucketQuan-%d, Dahi5LT1_5BucketQuan=Dahi5LT1_5BucketQuan-%d, Dahi10LT1_5BucketQuan=Dahi10LT1_5BucketQuan-%d,
+            ButtermilkRoleQuan=ButtermilkRoleQuan-%d, Khova500TinQuan=Khova500TinQuan-%d, Khoya1000TinQuan=Khoya1000TinQuan-%d,
+            Shrikhand100TinQuan=Shrikhand100TinQuan-%d, Shrikhand250TinQuan=Shrikhand250TinQuan-%d, Ghee200TinQuan=Ghee200TinQuan-%d,
+            Ghee500TinQuan=Ghee500TinQuan-%d, Ghee15LTTinQuan=Ghee15LTTinQuan-%d, PaneerlooseQuan=PaneerlooseQuan-%d,
+            khovalooseQuan=khovalooseQuan-%d, LASSICUPFOILQuan=LASSICUPFOILQuan-%d, IFFFLAVERMANGOQuan=IFFFLAVERMANGOQuan-%d,
+            IFFFLAVERVANILLAQuan=IFFFLAVERVANILLAQuan-%d, CULTUREAMAZIKAQuan=CULTUREAMAZIKAQuan-%d, CULTUREDANISKOQuan=CULTUREDANISKOQuan-%d,
+            CULTUREHRQuan=CULTUREHRQuan-%d, LIQUIDSOAPQuan=LIQUIDSOAPQuan-%d, COSSODAQuan=COSSODAQuan-%d, KAOHQuan=KAOHQuan-%d
+            WHERE date=CURDATE()
+            """
+            result=[x for x in datar]
             cur.execute(query%tuple(result))
+
             mysql.connection.commit()
             cur.close()
             return """
