@@ -21,6 +21,7 @@ import { UseRawMaterialComponent } from './use-raw-material/use-raw-material.com
 import { VendorStatusComponent } from './vendor-status/vendor-status.component';
 import { VendorPaymentsComponent } from './vendor-payments/vendor-payments.component';
 import { VendorTransactionsComponent } from './vendor-transactions/vendor-transactions.component';
+import { ProductProductionComponent } from './product-production/product-production.component';
 
 const routes: Routes = [
 
@@ -107,6 +108,10 @@ const routes: Routes = [
   {
     component:VendorTransactionsComponent,
     path:'VendorTransactions'
+  },
+  {
+    component:ProductProductionComponent,
+    path:'ProductProduction'
   },
 ];
 

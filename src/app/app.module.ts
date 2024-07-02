@@ -30,6 +30,7 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { UseRawMaterialComponent } from './use-raw-material/use-raw-material.component';
 import { VendorPaymentsComponent } from './vendor-payments/vendor-payments.component';
 import { VendorService } from './vendor.service';
+import { ProductProductionComponent } from './product-production/product-production.component';
 // import { VendorTransactionsComponent } from './vendor-transactions/vendor-transactions.component';
 
 @NgModule({
@@ -55,6 +56,7 @@ import { VendorService } from './vendor.service';
     RawMaterialsDeatailsComponent,
     UseRawMaterialComponent,
     VendorPaymentsComponent,
+    ProductProductionComponent,
     
   ],
   imports: [
